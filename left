@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#Hier wird jede Nicht-Zahl durch ein Leerzeichen ersetzt, sodass man das Programm auch als "left 100_100" oÄ aufrufen kann.
+num=0
+for i in $(echo $* | sed 's/[^0-9.]/ /g') ; do
+        c[$num]=$i
+        let num++
+done
+
+# 0 Argumente - Click
+# 1 Argument  - Click, delay x
+# 2 Argumente - Click an den angebenen Koordinaten
+# 3 Argumente - move zu den angegebenen Koorditanen, delay, click, delay
+case ${#c[*]} in
+0)	xdotool click 1
+	;;
+1)	xdotool click 1
+	sleep ${c[0]}
+	;;
+2)	xdotool mousemove ${c[0]} ${c[1]} click 1
+	;;
+3)	xdotool mousemove ${c[0]} ${c[1]}
+	sleep ${c[2]}
+	xdotool click 1
+	sleep ${c[2]}
+	;;
+*)	echo "left: 0 - 3 arguments expected"
+	;;
+esac

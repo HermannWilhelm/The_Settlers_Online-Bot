@@ -1,0 +1,56 @@
+#!/bin/bash
+
+#Falls das erste Argument =~ [1-6] ist: s_select_general $1
+#Danach:
+#Verändert die zugewiesenen Truppen,
+#Bsp.: s_units 1 r 100 s 10 c -50 erhöht Rekruten vom ersten General um 100, Soldaten um 10
+#und verringert die Anzahl der Reiterei-Einheiten um 50
+# "-n" negiert alle Argumente (verringert <-> erhöhen)
+
+negative=0
+while [[ ${1:0:1} = '-' ]] ; do
+        case $1 in
+        '-n')   negative=1 ;;
+        *)      echo "unknown argument $1"
+                exit 1  ;;
+        esac
+        shift
+done
+
+if [[ $1 =~ [1-6] ]] ; then
+  s_select_general $1
+  shift
+fi
+
+[[ $(($#%2)) -eq 1 ]] && echo "s_units: Even number of arguments expected" && exit 1
+
+while [[ $# -ge 2 ]] ; do
+  anz=$2
+  case $1 in
+    r|b|m) y=590 ;;
+    c|l|s) y=645 ;;
+    a|e|k) y=700 ;;
+    *)  echo "s_units: unknown unit $1" && exit 1
+    ;;
+  esac
+  case $1 in
+    r|c|a) x=1000 ;;
+    b|l|e) x=1125 ;;
+    m|s|k) x=1250 ;;
+  esac
+  negative_units=0
+  [[ ${anz:0:1} = '-' ]] && anz=${anz:1} && negative_units=1
+  [[ $negative -ne $negative_units ]] && x=$[$x-103]
+  sleep 0.5
+  for i in $(seq 1 $anz) ; do left $x $y 0.02 ; done
+  shift 2
+done
+left 1035 747 0.5
+waitforcolor -d 1 -m 20 924 681 '836641'
+if [[ $? -ne 0 ]] ; then
+  s_button_generalX
+  s_star Spezialisten
+  left $(s_starpos $active_general) 1
+  sleep 2
+fi
+sleep 1

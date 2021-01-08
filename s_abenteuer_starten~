@@ -1,0 +1,127 @@
+#!/bin/bash
+
+#usage : s_abenteuer_starten schaedel r 400 b 200
+#startet das abenetuer schaedel und schickt entsprechende truppen hin
+
+[[ $(($# % 2)) -eq 0 ]] && echo "abenteuer: Odd number of arguments expected" && exit 1
+start_adventureQ=1
+send_generalsQ=1
+
+# Falls das Abenteuer schon gestartet wurde, soll es nicht nochmal gestartet werden.
+if [[ $(color 1830 492) =~ (78721c|d4af5f|faefa6|6b330c|c59a4f|86571f|a65f1d|ffffe3|fdde77|8b6733|ac6520) ]] ; then
+  start_adventureQ=0
+  # Falls der General nicht mehr da ist, sollen die Truppen nicht nochmal geschickt werden.
+  s_star Spezialisten
+  [[ $(color $(s_starpos 1)) =~ ($cvn|$cvb) ]] || send_generalsQ=0
+  s_starX
+fi
+
+if [[ $start_adventureQ -eq 1 ]] ; then
+  #atcol ist die farbe des abenteuers $1
+  case $1 in
+    sumpf|verraeter|insel|sattel|tropen|beutel|ueber|priester|schaedel|raeuber|ritter)
+      eval atcol=\$$1
+    ;;
+    *)
+    echo "abenteuer: unknown AT $1"
+    exit 1
+    ;;
+  esac
+  #Abenteuer mit Farbe=$atcol starten
+  s_star Diverses
+  s_star_all_down
+  c=3
+  while true ; do
+    #durchsucht die c-te Zeile nach dem AT
+    for i in $(seq $((6*c)) -1 $((6*c-5))) ; do
+      if [[ $(color $(s_starpos $i)) = $atcol ]] ; then
+	left $(s_starpos $i) 1	#AT anklicken
+	left 920 820 0.1	#AT starten
+	left 920 850 0.1	#AT starten 2
+	left 956 642 2		#"ok"
+	sleep 15
+	break 2
+      fi
+    done
+    # falls der Balken sich nicht mehr nach oben schieben lässt: Wende noch die 2-te und 1-te Zeile an, dann break
+    if [[ $c -eq 3 ]] ; then
+      if [[ $(color 1157 761) = 3[ab]3[67]29 ]] ; then
+	s_star_up
+      else
+	let c--
+      fi
+    else
+      [[ $c -eq 1 ]] && echo "abenteuer: AT $1 not found" && exit 1
+      let c--
+    fi
+  done
+fi
+shift
+
+
+#$gen_list und $vet_list erzeugen
+      units=(r b m c l s a e k)
+unit_anzahl=(0 0 0 0 0 0 0 0 0)
+unit_list=($(echo $* | sed "$(for i in $(seq 0 $((${#units[*]}-1))) ; do echo -n "s/${units[i]}/$i/g;" ; done)"))
+for i in $(seq 1 $((${#unit_list[*]}/2))) ; do
+  let unit_anzahl[${unit_list[$((2*i-2))]}]+=${unit_list[$((2*i-1))]}
+done
+
+#unit_anzahl ist jetzt ein vector der art 100 200 0 0 0 0 0 10 10
+
+
+[[ $(echo ${unit_anzahl[*]} | sed 's/ /+/g' | bc) -gt 1050 ]] && echo "s_abenteuer_starten: Zu viele Einheiten" && exit 1
+
+units_vet=(0 0 0 0 0 0 0 0 0)
+units_gen=(0 0 0 0 0 0 0 0 0)
+
+#Der Veteran kriegt den Rest mod 4 von allen Einheiten, der Rest wird auf die Generäle aufgeteilt (Es gibt 4 Gens, daher /4)
+#und wenn $free_on_general=0 (also jeder General 200 Einheiten hat) bekommt der Veteran den Rest.
+
+for i in $(seq 0 $((${#unit_anzahl[*]}-1))) ; do
+  let units_vet[i]+=unit_anzahl[i]%4
+  let unit_anzahl[i]-=unit_anzahl[i]%4
+  free_on_general=$(echo "200-${units_gen[*]}" | sed 's/ /-/g' | bc)
+  if [[ $((${unit_anzahl[i]}/4)) -le $free_on_general ]] ; then
+    let units_gen[i]+=unit_anzahl[i]/4
+  else
+    let units_gen[i]+=$free_on_general
+    let units_vet[i]+=unit_anzahl[i]-4*$free_on_general
+  fi
+done
+
+#units_vet und units_gen sind entsprechende Verkoter der Form 25 25 0 0 0 0 0 0 150 für die Generäle.
+
+gen_list=$(for i in $(seq 0 $((${#units_gen[*]}-1))) ; do echo -n "${units[i]} ${units_gen[i]} " ; done)
+vet_list=$(for i in $(seq 0 $((${#units_vet[*]}-1))) ; do echo -n "${units[i]} ${units_vet[i]} " ; done)
+
+# gen_list und vet_list sind die Variablen für "s_units $gen_list"
+
+#Die Generäle mit Truppen ausstatten und zum aktiven Abenteuer schicken
+if [[ $send_generalsQ -eq 1 ]] ; then
+  s_select_general 1
+  s_units $vet_list
+  for i in 2 3 4 5 ; do
+    s_select_general $i
+    s_units $gen_list
+  done
+  for i in {1..5} ; do
+    left 1835 526 0.5		#abenteuer
+    left 1845 560 0.2		#armee senden
+    left 840 510 0.2		#general anwählen
+    left 955 777 0.5		#ok
+  done
+  #Abenteuer besuchen, Truppen wieder entfernen
+  pause 25
+fi
+s_abenteuer_besuchen
+sleep 180
+s_select_general 1
+s_units -n $vet_list
+for i in 2 3 4 5 ; do
+  s_select_general $i
+  s_units -n $gen_list
+done
+s_button_generalX
+s_zoom_out
+

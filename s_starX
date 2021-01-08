@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#Schließt das Sternmenü.
+
+left 1176 751 0.5

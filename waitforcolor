@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Beispiel : waitforcolor 1000 500 ff0000
+# Wartet, bis 1000 500 rot ist
+
+# Optionen:
+# -o	wartet, bis an $1 $2 eine andere Farbe ist
+# -m X	bricht nach X Tests ab
+# -d X	wartet X Sekunden zwischen den Tetst (Standart = 10)
+
+# Exit Status
+# 1 wrong arguments
+# 2 max number of tests reached
+
+delay=10
+other=0
+max=0
+c=0
+
+while [[ ${1:0:1} = '-' ]] ; do
+	case $1 in
+	'-o')	other=1 ;;
+	'-d')	delay=$2
+		shift	;;
+	'-m')	max=$2
+		shift	;;
+	*)	echo "waitforcolor: unknown argument $1"
+		exit 1	;;
+	esac
+	shift
+done
+
+if [[ $# -ne 3 ]] ; then
+	echo 'waitforcolor: wrong arguments'
+	exit 1
+fi
+
+long=0
+if [[ $delay -gt 3 ]] ; then
+	delay=$[delay-2]
+	long=1
+fi
+
+
+while true ; do
+	move $1 $2
+	[[ $long -eq 0 ]] && col=$(color) || col=$(color -l)
+	if ((other)) ; then
+		[[ $col =~ $3 ]] || break
+	else
+		[[ $col =~ $3 ]] && break
+	fi
+	((++c-max)) || exit 2
+	sleep $delay
+done
+
+

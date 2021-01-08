@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#usage: verschieb x y a b
+#verschiebt (x,y) nach (a,b)
+
+if [[ $# -ne 4 ]] ; then
+	echo blah
+else
+	xdotool mousemove $1 $2
+	sleep 0.1
+	xdotool mousedown 1
+	sleep 0.1
+	xdotool mousemove $3 $4
+	sleep 0.1
+	xdotool mouseup 1
+	sleep 0.1
+fi

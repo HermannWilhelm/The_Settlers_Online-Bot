@@ -1,0 +1,8 @@
+#!/bin/bash
+
+#Bringt die Karte der Heimatinsel in die richtige Position zum Mienen überprüfen, Mienen bauen und Sternmenü Rohstoffe anwenden.
+
+s_zoom_out
+s_map_right_up
+#alt: verschieb 1662 264 886 658
+verschieb 897 330 122 680

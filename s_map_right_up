@@ -1,0 +1,8 @@
+#!/bin/bash
+
+#Schiebt die Karte nach rechts oben (sodass in der Mitte des Bildschirms die likere untere Ecke ist)
+
+verschieb 570 950 1750 160
+sleep 0.3
+verschieb 570 950 1750 160
+sleep 1

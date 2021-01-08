@@ -1,0 +1,43 @@
+#!/bin/bash
+
+#wartet auf den General an Position x und wählt ihn aus
+
+wait=1
+
+while [[ ${1:0:1} = '-' ]] ; do
+  for i in $(printf -- "$1" | sed 's/-/ /g') ; do
+    case $i in
+      w)        wait=0 ;;		#Wartet nicht bis der General verfügbar ist (zB zum zurückziehen)
+      *)        echo "unknown argument $i"
+                exit 1  ;;
+    esac
+  done
+  shift
+done
+
+
+[[ $# -ne 1 && $# -ne 3 ]] && echo "s_select_general: One or three arguments expected." && exit 1
+s_star Spezialisten
+if ((wait)) ; then
+  case $1 in
+    1) col=$cvn ;;
+    2) col=$cmn ;;
+    3) col=$ckgn ;;
+    [4-7]) col=$cgen ;;
+    *) echo "s_select_general: General number should be in {1..7}" ; exit 1 ;;
+  esac
+  while true ; do
+    [[ $(color $(s_starpos $1)) = $col ]] && break
+    sleep 1
+    s_star
+    sleep 1
+    s_star
+  done
+fi
+#if [[ $# -eq 3 ]] ; then
+#  s_starX
+#  left $2 $3 1
+#else
+  left $(s_starpos $1) 1
+#fi
+

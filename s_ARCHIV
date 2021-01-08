@@ -1,0 +1,157 @@
+;;
+chewi)
+	left 993 1065 0.3	#menüleiste ausklappen
+	x=851
+	left $x 1048 0.3	#chewi
+	left $[$x+72] 1038 0.3	#handeln
+	left 827 704 0.5	#angebot auswählen
+	ChooseResource $2 $3
+	left 1168 704 0.5	#preis auswählen
+	ChooseResource 1 fische
+	left 999 663 0.3	#angebot einstellen
+	sleep 0.5		# -----------------------------------------
+	left $x 1048 0.3	#chewi
+	left $[$x+72] 1038 0.3	#handeln
+	left 827 704 0.5	#angebot auswählen
+	ChooseResource 1 fische
+	left 1168 704 0.5	#preis auswählen
+	ChooseResource $2 $3
+	left 999 663 0.3	#angebot einstellen
+	left 996 976 0.3	#menüleiste einklappen
+	shift
+	shift
+
+############################################################################################################################# aus s_abenteuer_starten
+
+s_star Diverses
+  s_star_all_down
+  c=3
+  while true ; do
+    #durchsucht die c-te Zeile nach dem AT
+    for i in $(seq $((6*c)) -1 $((6*c-5))) ; do
+      if [[ $(color $(s_starpos $i)) = $atcol ]] ; then
+        left $(s_starpos $i) 1  #AT anklicken
+        left 920 820 0.1        #AT starten
+        left 920 850 0.1        #AT starten 2
+        left 956 642 2          #"ok"
+        sleep 15
+        break 2
+      fi
+    done
+    # falls der Balken sich nicht mehr nach oben schieben lässt: Wende noch die 2-te und 1-te Zeile a$
+    if [[ $c -eq 3 ]] ; then
+      if [[ $(color 1157 761) = 3[ab]3[67]29 ]] ; then
+        s_star_up
+      else
+        let c--
+      fi
+    else
+      [[ $c -eq 1 ]] && echo "abenteuer: AT $1 not found" && exit 1
+      let c--
+    fi
+  done
+#end
+
+###################################################################################################################### Dinge, die mit "Mehrere Stapel in der Kaserne und im Proviantlager bauen" obsolet geworden sind
+
+ok () { left 1134 669 0.2 ; }							#Drückt in der kaserne oder im proviantlager "ok"
+x () { left 1261 409 0.2 ; }							#Schließt die kaserne bzw das proviantlager
+Proviantlager () { s_adjust_map ; left 544 862 0.5 ; }				#Wählt das Raritätenproviantlager an
+Kaserne () { left 500 500 0.2 ; xdotool key b ; sleep 1 ; }			#
+Proviantlager_Vorkommen () { Proviantlager ; left 1110 800 0.5 ; }		#
+
+### Fehler ausgeben und abbrechen, falls die Argumente falsch sind.
+unitsQ=0
+for i in $* ; do
+  if ((unitsQ)) ; then
+    if [[ ! $i =~ ^[0-9]{1,}$ ]] ; then
+      leave "s: integer expected: can not produce '$i' units."
+    fi
+    unitsQ=0
+  else
+    if [[ $i =~ ^(test|dauer|star|fischfutter|moschus|[hrbmclsaek]|nord|priester|sattel|sumpf|tropen|schaedel|schädel|nordend)$ ]] ; then
+      [[ ! $i =~ ^[rbmclsaek]$ ]] ; unitsQ=$?
+    else
+      leave "s: unknown argument '$i'."
+    fi
+  fi
+done
+
+######
+
+fischfutter)
+  Proviantlager_Vorkommen
+  while true ; do
+    left 940 530 0.5				#seltenes Fischfutter
+    sleep 0.5
+    [[ $(color 1087 604) = 'ffffff' ]] || break
+    balken
+    ok
+    let c++
+  done
+  x
+;;
+moschus)
+  Proviantlager_Vorkommen
+  while true ; do
+    left 895 530 0.5				#Wildhütersnack
+    sleep 0.5
+    [[ $(color 1083 602) = 'ffffff' ]] || break
+    [[ $(color 1128 604) = 'ffffff' ]] || break
+    balken
+    ok
+    let c++
+  done
+  x
+;;
+r|b|m|c|l|s|a|e|k)
+  Kaserne
+  sleep 1
+  case $1 in
+    r|b|m) y=522 ;;
+    c|l|s) y=571 ;;
+    a|e|k) y=621 ;;
+  esac
+  case $1 in
+    r|c|a) x=903 ;;
+    b|l|e) x=948 ;;
+    m|s|k) x=994 ;;
+  esac
+  anz=$2
+  while [[ anz -ge 25 ]] ; do
+    left $x $y 0.3
+    balken
+    let anz=anz-25
+    ok
+    sleep 0.2
+  done
+  if [[ anz -ne 0 ]] ; then
+    left $x $y 0.5
+    for i in $(seq 2 $anz) ; do
+      left 1259 637 0.02
+    done
+    sleep 0.5
+    ok
+  fi
+  x
+  shift
+;;
+
+######################################################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

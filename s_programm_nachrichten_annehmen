@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Nimmt alle Rohstoffnachrichten an und löscht alle Kampfberichte
+
+s_button_nachrichten
+sleep 2
+for i in 1310 1328 ; do
+  sleep 1
+  [[ $i -eq 1310 ]] && c=1000
+  [[ $i -eq 1328 ]] && c=100
+  while ((c--)) ; do
+    case $(color $i 409) in
+    606060|595959|545454|322b22)		#Graues Kreuz (annehmbar)
+      left 989 405				#nachricht anwählen
+      left 1178 819				#annehmen
+      left 1096 818				#annehmen
+      left 1020 834	                        #annehmen
+      left 1020 815     	                #annehmen
+      left 1020 788             	        #annehmen
+      ;;
+    aa4d00|b45600)				        #Rotes Kreuz (Kampfbericht)
+    left $i 409				#löschen
+      ;;
+    *)
+      break
+      ;;
+    esac
+  done
+done
+s_button_nachrichtenX

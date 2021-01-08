@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Falls von Fisch, Laubholzbretter, Marmor oder Eisenerz genug da ist : stelle entsprechende Angebote in den Handel.
+
+
+f=0
+l=0
+m=0
+e=0
+#angebot = anzahl angebote, die maximal eingestellt werden sollen (Angebote nach dem ersten kosten 3, 6, 9,... Gold)
+angebot=2
+# Was ist da ?
+s_select_rathaus
+sleep 1
+[[ $(color 1473 761) = '87823b' ]] && f=1	#Fisch
+s_select_rathaus_rohstoffe 2
+[[ $(color 1552 716) = '87823b' ]] && l=1	#Laubholzbretter
+#[[ $(color 1472 785) = '87823b' ]] && m=1	#Marmor
+#[[ $(color 1632 706) = '87823b' ]] && e=1	#Eisenerz
+if [[ $[f+l+m+e] -ne 0 ]] ; then
+  left 872 1034 0.2				#handel
+  left 997 785 0.3				#verkaufen
+  for i in $(seq 479 30 $((490+30*angebot))) ; do
+    [[ $(color 1288 $i) = 'bc6000' ]] && let angebot--
+  done
+  left 1291 425 0.5				#fenster schließen
+  for i in $(seq 1 $angebot) ; do
+    [[ $[f+l+m+e] -eq 0 ]] && break
+    [[ $i -ne 1 ]] && sleep 20
+    if [[ $f -ne 0 ]] ; then
+      s_handel 20000 fi 99 gr
+      f=0
+    elif [[ $l -ne 0 ]] ; then
+      s_handel 20000 laubholzb 129 gr
+      l=0
+    elif [[ $m -ne 0 ]] ; then
+      s_handel 10000 mar 179 gr
+      m=0
+    elif [[ $e -ne 0 ]] ; then
+      s_handel 10000 eis 399 gr
+      e=0
+    fi
+  done
+fi
+

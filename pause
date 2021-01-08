@@ -1,0 +1,19 @@
+#!/bin/bash
+# pause 1	wartet eine Minute
+# pause -s 10	wartet 10 Sekunden
+
+
+if [[ -z $1 ]] ; then
+	x=0
+elif [[ $1 = '-s' ]] ; then
+	x=$2
+else 
+	x=$[60*$1]
+fi
+
+#while [[ $x -gt 250 ]] ; do#
+#	sleep 240
+#	left 500 500 1
+#	x=$[$x-240]
+#done
+sleep $x

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#enable extglob, damit in case @(o|ö|oe) funktioniert
+shopt -s extglob
+
+#Öffnet das Sternmenü
+left 991 1020 0.3
+
+# und wählt bei entsp Option entsp Unterpunkt an
+case $1 in
+	[Ss]pezi*)		left 915 965 0.2 ;;
+	[Ff]@(o|ö|oe)rder*)	left 996 965 0.2 ;;
+	[Rr]oh*)		left 1073 965 0.2 ;;
+	[Dd]iv*)		left 1143 965 0.2 ;;
+esac

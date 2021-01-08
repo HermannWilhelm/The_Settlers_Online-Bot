@@ -1,0 +1,28 @@
+#!/bin/bash
+
+shopt -s extglob
+
+while [[ ${1:0:1} = '-' ]] ; do
+  if [[ ${1:1:1} = '-' ]] ; then
+    case ${1:2} in
+      wait_login)	wait_for_dayly_loginQ=0 ;;
+      poweroff)		poweroffQ=1             ;;
+      wait_geo)		wait_geoQ=0		;;
+      send_anyway)	send_geologists_anywayQ=1 ;;
+      stopp_f@(o|oe|ö)rder) stopp_forderQ=1	;;
+      *)        leave "s: unknown option $i"    ;;
+    esac
+  else
+  for i in $(echo ${1/-/} | sed 's/ */ /g') ; do
+    case $i in 
+      d)	wait_for_dayly_loginQ=0	;;	#Warte nicht auf den Dayli-Login-Bonus
+      p)	poweroffQ=1		;;	#Schalte den Computer nach dem Programm aus
+      g)	wait_geoQ=0		;;	#Für h: Warte nicht, bis Geologen fertig gesucht haben.
+      s)	send_geologists_anywayQ=1 ;;	#Für h: Schicke Geologen los, auch wenn gerade Geologen suchen.
+      f)	stopp_forderQ=1		;;
+      *)	leave "s: unknown option $i"	;;
+    esac
+  done
+  fi
+  shift
+done

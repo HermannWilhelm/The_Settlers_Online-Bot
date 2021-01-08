@@ -1,0 +1,12 @@
+#!/bin/bash
+
+case $# in
+	0)	echo "stufe h prodzeit(min, s)"
+		echo "h prodzeit(min, s)"
+		echo "prodzeit(min, s) (in 24 h)"
+		echo "prodzeit(min) (in 24 h)";;
+	4)	echo $(($1*$2*60*60/(60*$3+$4))) ;;
+        3)      echo $(($1*60*60/(60*$2+$3))) ;;
+        2)      echo $((24*60*60/(60*$2+$3))) ;;
+        1)      echo $((24*60*60/(60*$2))) ;;
+esac

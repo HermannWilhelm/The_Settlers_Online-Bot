@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#Verschiebt den General nach $1,$2 (Der General muss angewählt sein)
+
+left 847 654 1
+left $1 $2 0.5

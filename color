@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#gibt die farbe an der curserposition als standart output
+# "-l" erhöht den delay auf 2 Sekunden
+
+
+x=0.2
+[[ $1 = '-l' ]] && x=2 && shift
+if [[ $# -ne 0 ]] ; then
+	if [[ ! $1 =~ ^[0-9]{1,4}$ || ! $2 =~ ^[0-9]{1,4}$ ]] ; then
+		echo "color: arguments should be x and y coordinate."
+		exit 1
+	fi
+	move $1 $2
+fi
+
+
+echo $(grabc & sleep $x ; xdotool click 1 ) | sed 's/#//'

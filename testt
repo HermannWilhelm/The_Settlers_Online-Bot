@@ -1,0 +1,7 @@
+#!/bin/bash
+
+x=lol
+
+case lol in
+@(lol)) echo test ;;
+esac

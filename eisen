@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# 10000 eisen:
+eisen=$1
+# 10000 eisenerz:
+erz=$2
+
+echo "$(prod 3 24 12 48)*($eisen/5000-$erz/2500-6/120)-14" | bc -l

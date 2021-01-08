@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#Sternmenü offen -> Schiebt den Balken eins nach oben.
+
+left 1157 746 0.2

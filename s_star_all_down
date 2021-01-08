@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#Falls das Sternmenü offen und der Balken ganz oben ist, schiebt den Balken nach ganz unten.
+
+verschieb 1157 754 1157 937

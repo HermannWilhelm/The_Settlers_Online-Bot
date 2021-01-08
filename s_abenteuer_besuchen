@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Besucht das aktuelle Abenteuer
+
+left 1835 526 0.5
+left 1840 537 0.5

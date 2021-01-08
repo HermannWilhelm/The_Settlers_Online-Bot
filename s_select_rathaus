@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#Wählt das Rathaus an.
+left 186 840 0.2
+left 555 815 0.3
+#xdotool key h
+sleep 1

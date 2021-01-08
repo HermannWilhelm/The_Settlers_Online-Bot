@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#Sucht im Sternmenü nach dem Farbcode bei $1. Die richtige Rubrik muss im star schon offen sein und der Balken ganz oben (daher zB nach s_star Förder)
+
+while [[ ${1:0:1} = '-' ]] ; do
+  for i in $(echo "${1/-/}" | sed 's/ */ /g') ; do
+    case $i in
+      v)        mode=v ;;
+      r)        mode=r ;;
+      *)        echo "unknown option $i"
+                exit 1  ;;
+    esac
+  done
+  shift
+done
+
+
+
+i=0
+while ((++i)) ; do
+  col=$(color $(s_starpos -$mode $i))
+  case $col in
+    $1)    left $(s_starpos -$mode $i) 0.5
+	   break ;;
+    $cempty|$cemptyr)  echo "s_search_for: $1 was not found" && exit 1 ;;
+
+    *)     [[ $i -ge 18 && $((i%6)) -eq 0 ]] && s_star_down ;;
+  esac
+done

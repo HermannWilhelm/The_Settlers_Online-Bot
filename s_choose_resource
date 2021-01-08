@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Für s_handel: s_choose_resource 100 edelholz
+
+left 1172 726 0.05	#suchen doppelklick
+left 1172 726 0.05
+xdotool key BackSpace
+sleep 1
+xtype $2
+if [[ $2 =~ ^(nzen|eisen)$ ]] ; then
+	left 845 524 0.2	#bei 'nzen' und 'eisen' sind bei 1,1 die gildenmünzen bzw eisenerz
+	else left 759 524 0.2	#rohstoff auswählen
+fi
+left 792 723 0.2	#anzahlfenster
+xdotool key Delete	#löscht die vorandene 1
+sleep 0.2
+xtype $1
+left 931 785 0.2	#ok

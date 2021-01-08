@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Zoomt maximal raus
+
+xdotool mousemove 500 500
+xdotool click --repeat 10 5

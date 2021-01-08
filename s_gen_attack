@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#Greift das Lager bei $1,$2 an (der General muss angewählt sein)
+
+left 845 570 1
+left $1 $2 0.5

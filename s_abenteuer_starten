@@ -1,0 +1,86 @@
+#!/bin/bash
+
+#usage : s_abenteuer_starten schaedel r 400 b 200
+#startet das abenetuer schaedel und schickt entsprechende truppen hin
+
+[[ $(($# % 2)) -eq 0 ]] && echo "abenteuer: Odd number of arguments expected" && exit 1
+start_adventureQ=1
+send_generalsQ=1
+unset glist
+
+# Falls das Abenteuer schon gestartet wurde, soll es nicht nochmal gestartet werden.
+if [[ $(color 1830 492) =~ (78721c|d4af5f|faefa6|6b330c|c59a4f|86571f|a65f1d|ffffe3|fdde77|8b6733|ac6520) || $(color 1829 500) = '8b6733' ]] ; then
+  start_adventureQ=0
+  # Falls der General nicht mehr da ist, sollen die Truppen nicht nochmal geschickt werden.
+  s_star Spezialisten
+  [[ $(color $(s_starpos 1)) =~ ($cvn|$cvb) ]] || send_generalsQ=0
+  s_starX
+fi
+
+if [[ $start_adventureQ -eq 1 ]] ; then
+  #atcol ist die farbe des abenteuers $1
+  case $1 in
+    sumpf|verraeter|insel|sattel|tropen|beutel|ueber|priester|schaedel|raeuber|ritter|nord)
+      eval atcol=\$$1
+    ;;
+    *)
+    echo "abenteuer: unknown AT $1"
+    exit 1
+    ;;
+  esac
+  #Abenteuer mit Farbe=$atcol starten
+  s_star Diverses
+  s_star_search_for $atcol
+  [[ $? -ne 0 ]] && echo "abenteuer: AT $1 not found" && exit 1
+  left 920 820 0.1        #AT starten
+  left 920 850 0.1        #AT starten 2
+  left 956 642 2          #"ok"
+  sleep 15
+fi
+at=$1
+shift
+
+#Die Generäle mit Truppen ausstatten und zum aktiven Abenteuer schicken
+if [[ $send_generalsQ -eq 1 ]] ; then
+  if [[ $at = 'nord' ]] ; then
+    s_units 1 a 250
+    s_units 2 c 160 m 60
+    s_units 3 a 10 m 100 e 10 s 23 r 1
+    gensToAt=3
+    pause=13
+  else
+    while [[ $# -gt 0 ]] ; do
+      [[ $# -eq 1 ]] && echo "s_abenteuer_starten: Odd number of arguments expected" && exit 1 #Ein Argument wurde oben schon weggeshiftet
+      glist="$glist $1 $[($2+5)/6]"
+      shift 2
+    done
+    for i in {1..6} ; do
+      s_units $i $glist
+    done
+    gensToAt=6
+    pause=28
+  fi
+  for i in $(seq 1 $gensToAt) ; do
+    left 1835 526 0.5		#abenteuer
+    left 1845 560 0.5		#armee senden
+    left 840 510 0.5		#general anwählen
+    left 953 812 0.5		#ok ( alt: 955 777)
+    sleep 10
+  done
+  #Abenteuer besuchen, Truppen wieder entfernen
+  pause $pause
+fi
+s_abenteuer_besuchen
+sleep 60
+if [[ $at = 'nord' ]] ; then
+    s_units 1 a -250
+    s_units 2 c -160 m -60
+    s_units 3 a -10 m -100 e -10 s -23 r -1
+else
+  for i in {1..6} ; do
+    s_units -n $i $glist
+  done
+fi
+s_button_generalX
+s_zoom_out
+

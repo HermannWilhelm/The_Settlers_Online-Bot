@@ -1,0 +1,11 @@
+#!/bin/bash
+
+left 750 550 0.5
+xdotool key x
+#if [[ $(color 1023 663) = 'ded2ae' || $(color 1023 664) = 'ded2ae' ]] ; then
+  left 1117 749 0.5
+  sleep 5
+  left 910 535 1	#Manuskript
+  left 1080 750 1	#Produzieren
+#fi
+left 1256 413 1 #Buchbinder schließen

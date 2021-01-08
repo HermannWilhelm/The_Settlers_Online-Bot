@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# stellt ein angebot in den handel:
+# zB s_handel 10000 fische 179 nzen
+
+[[ $# -lt 4 || $# -gt 5 ]] && echo "s_handel: needs 4 or 5 arguments" && exit 1
+for i in $1 $3 $5 ; do
+	[[ ! $i =~ ^[0-9]*$ ]] && echo "s_handel: The argument '$i' should be an integer." && exit 1
+done
+c=$5
+
+left 872 1022 0.5	#handel
+left 997 785 1		#verkaufen
+if [[ $(color 992 750) =~ [c-d][0-f][c-d][0-f][9-a][0-f] ]] ; then
+  left 992 750 0.3	#einstellen
+else
+  left 1075 749 0.3	#angebot für münzen kaufen
+  left 955 641 0.3	#"ok"
+fi
+left 827 704 1		#angebot auswählen
+s_choose_resource $1 $2
+left 1168 704 0.5	#preis auswählen
+s_choose_resource $3 $4
+while [[ $((c--)) -gt 1 ]] ; do left 1059 592 ; done
+left 999 663 0.5	#angebot einstellen
+left 1291 425 0.5	#fenster schließen

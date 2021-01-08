@@ -1,0 +1,52 @@
+#!/bin/bash
+# Echo die Koordinaten eines Sternmenübuttons
+# usage: s_starpos [a | -x xy] für a-te Position bzw. x-te Spalte, y-te Zeile (x von 1 bis 6, y von 1 bis 3, a von 1 bis infty, falls a>18 wird a-=6 gemacht bis 12<a<=18 )
+# Mit -r oder -v werden andere Positionen (auf dem selben Button) ausgegeben. So können Rohstoffe unterschieden (-r), bzw Rohstoffe von Auffüllern für Vorkommen (-v).
+
+#Die Position wird durch xy angegeben:
+xy=0
+#Normale, Rohstoff- oder Vorkommenposition
+mode=normal
+
+while [[ ${1:0:1} = '-' ]] ; do
+  for i in $(echo "${1/-/}" | sed 's/ */ /g') ; do
+    case $i in
+      x)	xy=1 ;;
+      v)	mode=vorkommen ;;
+      r)	mode=rohstoff ;;
+      *)	echo "unknown option $i"
+		exit 1	;;
+    esac
+  done
+  shift
+done
+
+if [[ ! $1 =~ ^[0-9]*$ ]] ; then
+	echo "s_starpos: invalid argument $1"
+	exit 1
+fi
+
+if [[ $xy = 0 ]] ; then
+	a=$((($1-1)%6+1))
+	b=$((($1+5)/6))
+else
+	a=${1:0:1}
+	b=${1:1}
+fi
+
+case $a in
+	1) x=837 ;;
+	2) x=893 ;;
+	3) x=949 ;;
+	4) x=1005 ;;
+	5) x=1061 ;;
+	6) x=1117 ;;
+esac
+case $b in
+	1) y=757 ;;
+	2) y=827 ;;
+	[0-9]*) y=897 ;;
+esac
+[[ $mode = rohstoff ]]  && y=$((y+15))
+[[ $mode = vorkommen ]] && x=$((x-10))
+echo "$x $y"
