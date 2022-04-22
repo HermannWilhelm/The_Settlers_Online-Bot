@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#gibt die farbe an der curserposition als standart output
+#Gibt die Farbe des angegebenen Pixels als standart output. Wenn keine Koordinaten angegeben werden, nehme die aktuelle Cursorposition.
 # "-l" erhöht den delay auf 2 Sekunden
 
 
